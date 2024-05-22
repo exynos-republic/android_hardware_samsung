@@ -23,7 +23,8 @@
 #include "samsung_powershare.h"
 
 namespace vendor {
-namespace lineage {
+namespace samsung {
+namespace hardware {
 namespace powershare {
 namespace V1_0 {
 namespace implementation {
@@ -71,21 +72,21 @@ static T get(const std::string& path, const T& def) {
     }
 }
 
-Return<bool> PowerShare::isEnabled() {
+android::hardware::Return<bool> PowerShare::isEnabled() {
     return get(POWERSHARE_PATH, 0) == 1;
 }
 
-Return<bool> PowerShare::setEnabled(bool enable) {
+android::hardware::Return<bool> PowerShare::setEnabled(bool enable) {
     set(POWERSHARE_PATH, enable ? 1 : 0);
 
     return isEnabled();
 }
 
-Return<uint32_t> PowerShare::getMinBattery() {
+android::hardware::Return<uint32_t> PowerShare::getMinBattery() {
     return get(POWERSHARE_STOP_CAPACITY_PATH, 0);
 }
 
-Return<uint32_t> PowerShare::setMinBattery(uint32_t minBattery) {
+android::hardware::Return<uint32_t> PowerShare::setMinBattery(uint32_t minBattery) {
     set(POWERSHARE_STOP_CAPACITY_PATH, minBattery);
 
     return getMinBattery();
@@ -94,5 +95,6 @@ Return<uint32_t> PowerShare::setMinBattery(uint32_t minBattery) {
 }  // namespace implementation
 }  // namespace V1_0
 }  // namespace powershare
-}  // namespace lineage
+}  // namespace hardware
+}  // namespace samsung
 }  // namespace vendor
