@@ -30,14 +30,14 @@ LOCAL_SHARED_LIBRARIES := \
     libbinder \
     libhidlbase \
     libutils \
-    vendor.lineage.powershare@1.0
+    vendor.samsung.hardware.powershare@1.0
 
-LOCAL_MODULE := vendor.lineage.powershare@1.0-service.samsung
-LOCAL_INIT_RC := vendor.lineage.powershare@1.0-service.samsung.rc
+LOCAL_MODULE := vendor.samsung.hardware.powershare@1.0-service
+LOCAL_INIT_RC := vendor.samsung.hardware.powershare@1.0-service.rc
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_OWNER := samsung
-LOCAL_VINTF_FRAGMENTS := vendor.lineage.powershare@1.0-service.samsung.xml
+LOCAL_VINTF_FRAGMENTS := vendor.samsung.hardware.powershare@1.0-service.xml
 LOCAL_VENDOR_MODULE := true
 
 include $(BUILD_EXECUTABLE)

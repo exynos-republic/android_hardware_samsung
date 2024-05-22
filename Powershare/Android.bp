@@ -1,0 +1,16 @@
+android_app {
+    name: "PowerShare",
+    defaults: ["SettingsLibDefaults"],
+
+    srcs: ["src/**/*.java"],
+    resource_dirs: ["res"],
+
+    static_libs: [
+        "vendor.samsung.hardware.powershare-V1.0-java",
+    ],
+
+    certificate: "platform",
+    platform_apis: true,
+    system_ext_specific: true,
+    privileged: true,
+}

@@ -18,10 +18,11 @@
 
 #include <hidl/MQDescriptor.h>
 #include <hidl/Status.h>
-#include <vendor/lineage/powershare/1.0/IPowerShare.h>
+#include <vendor/samsung/hardware/powershare/1.0/IPowerShare.h>
 
 namespace vendor {
-namespace lineage {
+namespace samsung {
+namespace hardware {
 namespace powershare {
 namespace V1_0 {
 namespace implementation {
@@ -34,7 +35,7 @@ using ::android::hardware::hidl_vec;
 using ::android::hardware::Return;
 using ::android::hardware::Void;
 
-using ::vendor::lineage::powershare::V1_0::IPowerShare;
+using ::vendor::samsung::hardware::powershare::V1_0::IPowerShare;
 
 
 struct PowerShare : public IPowerShare {
@@ -47,5 +48,6 @@ struct PowerShare : public IPowerShare {
 }  // namespace implementation
 }  // namespace V1_0
 }  // namespace powershare
-}  // namespace lineage
+}  // namespace hardware
+}  // namespace samsung
 }  // namespace vendor

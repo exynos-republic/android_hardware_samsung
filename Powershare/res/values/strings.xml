@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="powershare_title">Battery Share</string>
+    <string name="powershare_summary">PowerShare</string>
+    
+    <string name="powershare_fragment_summary">Configure PowerShare settings</string>
+    <string name="powershare_toggle_summary">Enable or disable PowerShare</string>
+
+</resources>

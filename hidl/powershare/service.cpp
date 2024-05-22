@@ -24,8 +24,8 @@
 using android::hardware::configureRpcThreadpool;
 using android::hardware::joinRpcThreadpool;
 
-using vendor::lineage::powershare::V1_0::IPowerShare;
-using vendor::lineage::powershare::V1_0::implementation::PowerShare;
+using vendor::samsung::hardware::powershare::V1_0::IPowerShare;
+using vendor::samsung::hardware::powershare::V1_0::implementation::PowerShare;
 
 using android::OK;
 using android::status_t;
