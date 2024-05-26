@@ -34,7 +34,7 @@ public class PowerShareManager {
             try {
                 bool1 = iPowerShare.isRtxEnabled();
             } catch (Exception exception) {
-                Log.i(TAG, "isRtxModeOn fail: ", exception);
+                Log.i(TAG, "failed to read rtx mode: ", exception);
                 bool1 = false;
             }
             return bool1;
@@ -49,7 +49,39 @@ public class PowerShareManager {
             try {
                 iPowerShare.setRtxMode(paramBoolean);
             } catch (Exception exception) {
-                Log.i(TAG, "setRtxMode fail: ", exception);
+                Log.i(TAG, "failed to set rtx mode: ", exception);
+            }
+    }
+
+    public int getRtxMinThreshold() {
+        initHALInterface();
+        IPowerShare iPowerShare = this.mPowerShare;
+
+        int minBattery;
+
+        if (iPowerShare != null) {
+            try {
+                minBattery = iPowerShare.getMinBattery();
+            } catch (Exception exception) {
+                Log.i(TAG, "Unable to read min battery level: ", exception);
+                // minBattery fallback: disable powershare
+                setRtxMode(false);
+            }
+            return -1;
+        } else {
+            Log.i(TAG, "Unable to read min battery level: PowerShare is null");
+            return -1;
+        } 
+    }
+
+    public void setRtxMinThreshold(int minBattery) {
+        initHALInterface();
+        IPowerShare iPowerShare = this.mPowerShare;
+        if (iPowerShare != null)
+            try {
+                iPowerShare.setMinBattery(minBattery);
+            } catch (Exception exception) {
+                Log.i(TAG, "Unable to set min battery level: ", exception);
             }
     }
 

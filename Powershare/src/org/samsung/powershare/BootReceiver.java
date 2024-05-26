@@ -13,6 +13,7 @@ import android.os.RemoteException;
 public class BootReceiver extends BroadcastReceiver {
     private static final String TAG = "PowerShareBootReceiver";
     private static final String KEY_POWERSHARE_SWITCH = "powershare_switch";
+    private static final String KEY_POWERSHARE_THRESHOLD = "powershare_threshold";
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -20,11 +21,11 @@ public class BootReceiver extends BroadcastReceiver {
             Log.d(TAG, "Boot completed intent received");
 
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean isPowerShareEnabled = sharedPrefs.getBoolean(KEY_POWERSHARE_SWITCH, false);
+            int lastMinBattery = sharedPrefs.getInt(KEY_POWERSHARE_THRESHOLD, 20);
 
             try {
                 IPowerShare powerShare = IPowerShare.getService();
-                powerShare.setRtxMode(isPowerShareEnabled);
+                powerShare.setMinBattery(lastMinBattery);
             } catch (RemoteException e) {
                 Log.e(TAG, "Failed to set PowerShare enabled state", e);
             }

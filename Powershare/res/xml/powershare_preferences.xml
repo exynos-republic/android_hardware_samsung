@@ -7,7 +7,7 @@
         <SeekBarPreference
         android:key="powershare_threshold"
         android:title="@string/powershare_seekbar_title"
-        android:defaultValue="50"
+        android:defaultValue="20"
         android:min="10"
         android:max="100"
         android:summary="@string/powershare_seekbar_summary"/>
