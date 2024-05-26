@@ -39,8 +39,8 @@ using ::vendor::samsung::hardware::powershare::V1_0::IPowerShare;
 
 
 struct PowerShare : public IPowerShare {
-    Return<bool> isEnabled() override;
-    Return<bool> setEnabled(bool enable) override;
+    Return<bool> isRtxEnabled() override;
+    Return<bool> setRtxMode(bool enable) override;
     Return<uint32_t> getMinBattery() override;
     Return<uint32_t> setMinBattery(uint32_t minBattery) override;
 };

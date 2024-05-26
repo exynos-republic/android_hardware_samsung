@@ -1,5 +1,7 @@
 package org.samsung.powershare;
 
+import android.content.BroadcastReceiver;
+import android.content.SharedPreferences;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -8,12 +10,12 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceFragment;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SeekBarPreference;
 import androidx.preference.SwitchPreference;
 
-public class PowerShareFragment extends PreferenceFragmentCompat {
+public class PowerShareFragment extends PreferenceFragment {
     private static final String TAG = "PowerShareFragment";
     private static final String KEY_POWERSHARE_SWITCH = "powershare_switch";
     private static final String KEY_POWERSHARE_THRESHOLD = "powershare_threshold";
@@ -23,6 +25,7 @@ public class PowerShareFragment extends PreferenceFragmentCompat {
     private SeekBarPreference mPowerShareThresholdPreference;
 
     private PowerShareManager mPowerShareManager;
+    private BroadcastReceiver mBatteryReceiver;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -55,18 +58,54 @@ public class PowerShareFragment extends PreferenceFragmentCompat {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerBatteryReceiver();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterBatteryReceiver();
+    }
+
+    private void registerBatteryReceiver() {
+        if (mBatteryReceiver == null) {
+            mBatteryReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    int batteryLevel = getCurrentBatteryLevel();
+                    int thresholdLevel = getThresholdLevel();
+                    if (batteryLevel < thresholdLevel) {
+                        setPowerShareMode(false);
+                    }
+                }
+            };
+            IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+            getContext().registerReceiver(mBatteryReceiver, filter);
+        }
+    }
+
+    private void unregisterBatteryReceiver() {
+        if (mBatteryReceiver != null) {
+            getContext().unregisterReceiver(mBatteryReceiver);
+            mBatteryReceiver = null;
+        }
+    }
+
     int getThresholdLevel() {
         return mSharedPrefs.getInt(KEY_POWERSHARE_THRESHOLD, 20);
     }
 
     boolean isLowBattery() {
-        int batteryLevel = getCurrentBatteryLevel(); // Implement this method to get the current battery level
+        int batteryLevel = getCurrentBatteryLevel();
         int thresholdLevel = getThresholdLevel();
         return batteryLevel < thresholdLevel;
     }
 
     boolean checkLaunchRequirements() {
-        return isLowBattery(); /*
+        return !isLowBattery(); /*
                                  * TODO: Add isOnWirelessCharge() and
                                  * isPowerSaveMode() checks
                                  */
@@ -84,8 +123,11 @@ public class PowerShareFragment extends PreferenceFragmentCompat {
     private void setPowerShareMode(boolean enabled) {
         try {
             if (enabled) {
-                if (checkLaunchRequirements())
+                if (checkLaunchRequirements()) {
                     mPowerShareManager.setRtxMode(enabled);
+                } else {
+                    mPowerSharePreference.setChecked(false);
+                }
             } else {
                 mPowerShareManager.setRtxMode(enabled);
             }
@@ -97,15 +139,14 @@ public class PowerShareFragment extends PreferenceFragmentCompat {
     private int getCurrentBatteryLevel() {
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = getContext().registerReceiver(null, ifilter);
-    
+
         int level = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) : -1;
         int scale = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1) : -1;
-    
+
         if (level == -1 || scale == -1) {
-            return 20; // Return a default value if battery level cannot be determined
+            return 50; // Return a default value if battery level cannot be determined
         }
-    
+
         return (int) ((level / (float) scale) * 100);
     }
-    
 }

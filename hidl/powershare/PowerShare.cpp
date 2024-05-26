@@ -72,14 +72,14 @@ static T get(const std::string& path, const T& def) {
     }
 }
 
-android::hardware::Return<bool> PowerShare::isEnabled() {
+android::hardware::Return<bool> PowerShare::isRtxEnabled() {
     return get(POWERSHARE_PATH, 0) == 1;
 }
 
-android::hardware::Return<bool> PowerShare::setEnabled(bool enable) {
+android::hardware::Return<bool> PowerShare::setRtxMode(bool enable) {
     set(POWERSHARE_PATH, enable ? 1 : 0);
 
-    return isEnabled();
+    return isRtxEnabled();
 }
 
 android::hardware::Return<uint32_t> PowerShare::getMinBattery() {

@@ -16,8 +16,8 @@
 package vendor.samsung.hardware.powershare@1.0;
 
 interface IPowerShare {
-    isEnabled() generates (bool rc);
-    setEnabled(bool enable) generates (bool rc);
+    isRtxEnabled() generates (bool rc);
+    setRtxMode(bool enable) generates (bool rc);
     getMinBattery() generates (uint32_t rc);
     setMinBattery(uint32_t minBattery) generates (uint32_t rc);
 };

@@ -24,7 +24,7 @@ public class BootReceiver extends BroadcastReceiver {
 
             try {
                 IPowerShare powerShare = IPowerShare.getService();
-                powerShare.setEnabled(isPowerShareEnabled);
+                powerShare.setRtxMode(isPowerShareEnabled);
             } catch (RemoteException e) {
                 Log.e(TAG, "Failed to set PowerShare enabled state", e);
             }

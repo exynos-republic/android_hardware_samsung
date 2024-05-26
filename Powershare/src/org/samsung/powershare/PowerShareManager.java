@@ -4,9 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
-import com.android.settings.overlay.FeatureFactory;
 
-import java.rmi.RemoteException;
+import android.os.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -33,14 +32,14 @@ public class PowerShareManager {
         if (iPowerShare != null) {
             boolean bool1;
             try {
-                bool1 = iPowerShare.isEnabled();
+                bool1 = iPowerShare.isRtxEnabled();
             } catch (Exception exception) {
                 Log.i(TAG, "isRtxModeOn fail: ", exception);
                 bool1 = false;
             }
             return bool1;
         }
-        boolean bool = false;
+        return false;
     }
 
     public void setRtxMode(boolean paramBoolean) {
