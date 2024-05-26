@@ -3,4 +3,12 @@
         android:key="powershare_switch"
         android:title="@string/powershare_title"
         android:summary="@string/powershare_summary" />
+
+        <SeekBarPreference
+        android:key="powershare_threshold"
+        android:title="@string/powershare_seekbar_title"
+        android:defaultValue="50"
+        android:min="10"
+        android:max="100"
+        android:summary="@string/powershare_seekbar_summary"/>
 </PreferenceScreen>

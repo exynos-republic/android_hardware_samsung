@@ -1,54 +1,43 @@
 package org.samsung.powershare;
 
-import android.app.ActionBar;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.BatteryManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.util.Log;
 
-import android.os.RemoteException;
-
 import androidx.preference.Preference;
-import androidx.preference.Preference.OnPreferenceChangeListener;
-import androidx.preference.PreferenceFragment;
+import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SeekBarPreference;
 import androidx.preference.SwitchPreference;
 
-import vendor.samsung.hardware.powershare.V1_0.IPowerShare;
-
-public class PowerShareFragment extends PreferenceFragment {
+public class PowerShareFragment extends PreferenceFragmentCompat {
     private static final String TAG = "PowerShareFragment";
     private static final String KEY_POWERSHARE_SWITCH = "powershare_switch";
+    private static final String KEY_POWERSHARE_THRESHOLD = "powershare_threshold";
 
     private SharedPreferences mSharedPrefs;
     private SwitchPreference mPowerSharePreference;
+    private SeekBarPreference mPowerShareThresholdPreference;
 
-    private IPowerShare mPowerShare;
+    private PowerShareManager mPowerShareManager;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.powershare_preferences, rootKey);
 
         mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        mPowerSharePreference = (SwitchPreference) findPreference(KEY_POWERSHARE_SWITCH);
-        //SwitchPreferenceCompat powerShareSwitch = findPreference(KEY_POWERSHARE_SWITCH);
+        mPowerSharePreference = findPreference(KEY_POWERSHARE_SWITCH);
+        mPowerShareThresholdPreference = findPreference(KEY_POWERSHARE_THRESHOLD);
 
-        try {
-            mPowerShare = IPowerShare.getService();
-        } catch (RemoteException e) {
-            Log.e(TAG, "Failed to get PowerShare service", e);
-        }
+        mPowerShareManager = new PowerShareManager();
 
-        if (mPowerShare != null) {
+        if (mPowerSharePreference != null) {
             mPowerSharePreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 boolean enabled = (Boolean) newValue;
-                setPowerShareEnabled(enabled);
+                setPowerShareMode(enabled);
                 return true;
             });
 
@@ -56,22 +45,67 @@ public class PowerShareFragment extends PreferenceFragment {
             boolean isEnabled = isPowerShareEnabled();
             mPowerSharePreference.setChecked(isEnabled);
         }
+
+        if (mPowerShareThresholdPreference != null) {
+            mPowerShareThresholdPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                int threshold = (Integer) newValue;
+                mSharedPrefs.edit().putInt(KEY_POWERSHARE_THRESHOLD, threshold).apply();
+                return true;
+            });
+        }
+    }
+
+    int getThresholdLevel() {
+        return mSharedPrefs.getInt(KEY_POWERSHARE_THRESHOLD, 20);
+    }
+
+    boolean isLowBattery() {
+        int batteryLevel = getCurrentBatteryLevel(); // Implement this method to get the current battery level
+        int thresholdLevel = getThresholdLevel();
+        return batteryLevel < thresholdLevel;
+    }
+
+    boolean checkLaunchRequirements() {
+        return isLowBattery(); /*
+                                 * TODO: Add isOnWirelessCharge() and
+                                 * isPowerSaveMode() checks
+                                 */
     }
 
     private boolean isPowerShareEnabled() {
         try {
-            return mPowerShare.isEnabled();
-        } catch (RemoteException e) {
+            return mPowerShareManager.isRtxModeOn();
+        } catch (Exception e) {
             Log.e(TAG, "Failed to check if PowerShare is enabled", e);
             return false;
         }
     }
 
-    private void setPowerShareEnabled(boolean enabled) {
+    private void setPowerShareMode(boolean enabled) {
         try {
-            mPowerShare.setEnabled(enabled);
-        } catch (RemoteException e) {
+            if (enabled) {
+                if (checkLaunchRequirements())
+                    mPowerShareManager.setRtxMode(enabled);
+            } else {
+                mPowerShareManager.setRtxMode(enabled);
+            }
+        } catch (Exception e) {
             Log.e(TAG, "Failed to set PowerShare enabled state", e);
         }
     }
+
+    private int getCurrentBatteryLevel() {
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = getContext().registerReceiver(null, ifilter);
+    
+        int level = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) : -1;
+        int scale = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1) : -1;
+    
+        if (level == -1 || scale == -1) {
+            return 20; // Return a default value if battery level cannot be determined
+        }
+    
+        return (int) ((level / (float) scale) * 100);
+    }
+    
 }

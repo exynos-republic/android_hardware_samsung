@@ -2,9 +2,12 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="powershare_title">Battery Share</string>
-    <string name="powershare_summary">PowerShare</string>
+    <string name="powershare_summary">BatteryShare</string>
     
     <string name="powershare_fragment_summary">Configure PowerShare settings</string>
     <string name="powershare_toggle_summary">Enable or disable PowerShare</string>
+
+    <string name="powershare_seekbar_title">"Battery Share Minimum Battery Level"</string>
+    <string name="powershare_seekbar_summary">Set the minimum battery level required for battery sharing</string>
 
 </resources>
