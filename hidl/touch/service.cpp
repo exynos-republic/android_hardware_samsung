@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "vendor.lineage.touch@1.0-service.samsung"
+#define LOG_TAG "vendor.samsung.hardware.touch@1.0-service"
 
 #include <android-base/logging.h>
 #include <binder/ProcessState.h>
 #include <hidl/HidlTransportSupport.h>
 
 #include "GloveMode.h"
-#include "KeyDisabler.h"
-#include "StylusMode.h"
-#include "TouchscreenGesture.h"
 
 using android::hardware::configureRpcThreadpool;
 using android::hardware::joinRpcThreadpool;
@@ -31,16 +28,10 @@ using android::sp;
 using android::status_t;
 using android::OK;
 
-using ::vendor::lineage::touch::V1_0::samsung::GloveMode;
-using ::vendor::lineage::touch::V1_0::samsung::KeyDisabler;
-using ::vendor::lineage::touch::V1_0::samsung::StylusMode;
-using ::vendor::lineage::touch::V1_0::samsung::TouchscreenGesture;
+using ::vendor::samsung::hardware::touch::V1_0::GloveMode;
 
 int main() {
     sp<GloveMode> gloveMode;
-    sp<KeyDisabler> keyDisabler;
-    sp<StylusMode> stylusMode;
-    sp<TouchscreenGesture> touchscreenGesture;
     status_t status;
 
     LOG(INFO) << "Touch HAL service is starting.";
@@ -51,24 +42,6 @@ int main() {
         goto shutdown;
     }
 
-    keyDisabler = new KeyDisabler();
-    if (keyDisabler == nullptr) {
-        LOG(ERROR) << "Can not create an instance of Touch HAL KeyDisabler Iface, exiting.";
-        goto shutdown;
-    }
-
-    stylusMode = new StylusMode();
-    if (stylusMode == nullptr) {
-        LOG(ERROR) << "Can not create an instance of Touch HAL StylusMode Iface, exiting.";
-        goto shutdown;
-    }
-
-    touchscreenGesture = new TouchscreenGesture();
-    if (touchscreenGesture == nullptr) {
-        LOG(ERROR) << "Can not create an instance of Touch HAL TouchscreenGesture Iface, exiting.";
-        goto shutdown;
-    }
-
     configureRpcThreadpool(1, true /*callerWillJoin*/);
 
     if (gloveMode->isSupported()) {
@@ -76,33 +49,6 @@ int main() {
         if (status != OK) {
             LOG(ERROR) << "Could not register service for Touch HAL GloveMode Iface (" << status
                        << ")";
-            goto shutdown;
-        }
-    }
-
-    if (keyDisabler->isSupported()) {
-        status = keyDisabler->registerAsService();
-        if (status != OK) {
-            LOG(ERROR) << "Could not register service for Touch HAL KeyDisabler Iface (" << status
-                       << ")";
-            goto shutdown;
-        }
-    }
-
-    if (stylusMode->isSupported()) {
-        status = stylusMode->registerAsService();
-        if (status != OK) {
-            LOG(ERROR) << "Could not register service for Touch HAL StylusMode Iface (" << status
-                       << ")";
-            goto shutdown;
-        }
-    }
-
-    if (touchscreenGesture->isSupported()) {
-        status = touchscreenGesture->registerAsService();
-        if (status != OK) {
-            LOG(ERROR) << "Could not register service for Touch HAL TouchscreenGesture Iface ("
-                       << status << ")";
             goto shutdown;
         }
     }

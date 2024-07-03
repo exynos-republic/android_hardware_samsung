@@ -18,14 +18,15 @@
 
 #include <hidl/MQDescriptor.h>
 #include <hidl/Status.h>
-#include <vendor/lineage/touch/1.0/IGloveMode.h>
+#include <vendor/samsung/hardware/touch/1.0/IGloveMode.h>
 #include "samsung_touch.h"
 
 namespace vendor {
-namespace lineage {
+namespace samsung {
+namespace hardware {
 namespace touch {
 namespace V1_0 {
-namespace samsung {
+
 
 using ::android::hardware::hidl_array;
 using ::android::hardware::hidl_memory;
@@ -41,15 +42,15 @@ class GloveMode : public IGloveMode {
 
     bool isSupported();
 
-    // Methods from ::vendor::lineage::touch::V1_0::IGloveMode follow.
+    // Methods from ::vendor::samsung::hardware::touch::IGloveMode follow.
     Return<bool> isEnabled() override;
     Return<bool> setEnabled(bool enabled) override;
 
     // Methods from ::android::hidl::base::V1_0::IBase follow.
 };
 
-}  // namespace samsung
 }  // namespace V1_0
 }  // namespace touch
-}  // namespace lineage
+}  // namespace hardware
+}  // namespace samsung
 }  // namespace vendor

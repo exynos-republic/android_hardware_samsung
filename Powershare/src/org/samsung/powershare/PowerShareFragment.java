@@ -8,7 +8,13 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.android.settingslib.Utils;
+import com.android.settingslib.widget.IllustrationPreference;
+import com.android.settingslib.widget.MainSwitchPreference;
+import com.android.settingslib.widget.TopIntroPreference;
+
 import androidx.preference.Preference;
+import androidx.preference.PreferenceScreen;
 import androidx.preference.PreferenceFragment;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SeekBarPreference;
@@ -93,4 +99,19 @@ public class PowerShareFragment extends PreferenceFragment {
         }
     }
 
+    // NB. not used
+    private int getCurrentBatteryLevel() {
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = getContext().registerReceiver(null, ifilter);
+
+        int level = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) : -1;
+        int scale = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1) : -1;
+
+        if (level == -1 || scale == -1) {
+            return 50; // Return a default value if battery level cannot be determined
+        }
+
+        return (int) ((level / (float) scale) * 100);
+    }
+    // mPowerSharePreference.setChecked(false);
 }

@@ -19,10 +19,10 @@
 #include "GloveMode.h"
 
 namespace vendor {
-namespace lineage {
+namespace samsung {
+namespace hardware {
 namespace touch {
 namespace V1_0 {
-namespace samsung {
 
 bool GloveMode::isSupported() {
     std::ifstream file(TSP_CMD_LIST_NODE);
@@ -54,8 +54,8 @@ Return<bool> GloveMode::setEnabled(bool enabled) {
     return true;
 }
 
-}  // namespace samsung
 }  // namespace V1_0
 }  // namespace touch
-}  // namespace lineage
+}  // namespace hardware
+}  // namespace samsung
 }  // namespace vendor
